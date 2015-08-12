@@ -99,5 +99,8 @@ VOLUME /opt/graphite/storage/whisper
 # Folder with dashboards
 VOLUME /src/dashboards
 
+#Statsd config folder
+VOLUME /src/statsd
+
 # Define default command
 CMD ["/usr/bin/supervisord"]
