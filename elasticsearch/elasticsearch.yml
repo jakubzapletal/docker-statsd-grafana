@@ -1,4 +1,0 @@
-path:
-  data: /data/elasticsearch/data
-  logs: /data/elasticsearch/log
-  work: /data/elasticsearch/work

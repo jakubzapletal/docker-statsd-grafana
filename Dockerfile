@@ -13,14 +13,6 @@ RUN \
     pip install Twisted==11.1.0 && \
     pip install Django==1.5
 
-# Install Elasticsearch
-RUN \
-    cd /tmp && \
-    wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.3.4.tar.gz && \
-    tar xvzf elasticsearch-1.3.4.tar.gz && \
-    rm -f elasticsearch-1.3.4.tar.gz && \
-    mv /tmp/elasticsearch-1.3.4 /elasticsearch
-
 RUN mkdir /src
 
 # Install Whisper
@@ -52,13 +44,10 @@ RUN \
 
 # Install Grafana
 RUN \
-    mkdir /src/grafana && \
-    wget http://grafanarel.s3.amazonaws.com/grafana-1.9.1.tar.gz -O /src/grafana.tar.gz && \
-    tar -xzf /src/grafana.tar.gz -C /src/grafana --strip-components=1 && \
-    rm /src/grafana.tar.gz
+    wget http://grafanarel.s3.amazonaws.com/builds/grafana_latest_amd64.deb && \
+    dpkg -i grafana_latest_amd64.deb && \
+    rm grafana_latest_amd64.deb
 
-# Configure Elasticsearch
-ADD elasticsearch/elasticsearch.yml /elasticsearch/config/elasticsearch.yml
 
 # Configure Whisper, Carbon and Graphite-Web
 ADD graphite/initial_data.json /opt/graphite/webapp/graphite/initial_data.json
@@ -76,28 +65,25 @@ RUN cd /opt/graphite/webapp/graphite && python manage.py syncdb --noinput
 # Confiure StatsD
 ADD statsd/config.js /src/statsd/config.js
 
-# Configure Grafana
-ADD grafana/config.js /src/grafana/config.js
+# Confiure Grafana
+ADD grafana/grafana.ini /etc/grafana/grafana.ini
 
 # Configure nginx and supervisord
 ADD nginx/nginx.conf /etc/nginx/nginx.conf
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Expose ports
-#   - 80: Grafana web interface
+#   - 3000: Grafana web interface
 #   - 8125/udp: StatsD port
 #   - 8126: StatsD administrative port
-EXPOSE 80 8125/udp 8126
+EXPOSE 3000 8125/udp 8126
 
 # Add the dashboards
-ADD grafana/dashboard-loader.js /src/dashboard-loader.js
 RUN mkdir -p /src/dashboards
+VOLUME /src/dashboards
 
 # Folder with data
 VOLUME /opt/graphite/storage/whisper
-
-# Folder with dashboards
-VOLUME /src/dashboards
 
 # Define default command
 CMD ["/usr/bin/supervisord"]
