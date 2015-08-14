@@ -1,4 +1,4 @@
-FROM jakubzapletal/ubuntu:14.04.1
+FROM jakubzapletal/ubuntu:14.04.3
 
 # Install all prerequisites
 RUN \
