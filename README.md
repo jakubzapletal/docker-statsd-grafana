@@ -8,19 +8,19 @@ and comes bundled with [Grafana](http://grafana.org/).
 This image is published under [Jakub Zapletal's repository on the Docker Hub](https://hub.docker.com/u/jakubzapletal/) and all you need as a prerequisite is having Docker installed on your machine.
 The container exposes the following ports:
 
-- `80`: Grafana web interface (`http://localhost:80`)
+- `3000`: Grafana 2 web interface (`http://localhost:3000`)
 - `8125/udp`: StatsD port
 - `8126`: StatsD admin TCP interface
 
 There are the prepared volumes:
 
 - `/opt/graphite/storage/whisper`: Saving data
-- `/src/dashboards`: Expects a file `default.json` which contains pre-configured dashboard for Grafana
+- `/src/dashboards`: Contains pre-configured dashboards for Grafana
 
 To start a container with this image you just need to run the following command:
 
 ```bash
-docker run -d -p 80:80 -p 8125:8125/udp -p 8126:8126 -v <LOCAL_PATH>:/opt/graphite/storage/whisper -v <LOCAL_PATH>:/src/dashboards --name statsd jakubzapletal/statsd
+docker run -d -p 3000:3000 -p 8125:8125/udp -p 8126:8126 -v <LOCAL_PATH>:/opt/graphite/storage/whisper -v <LOCAL_PATH>:/src/dashboards --name statsd jakubzapletal/statsd
 ```
 
 If you already have services running on your host that are using any of these ports, you may wish to map the container

@@ -48,7 +48,6 @@ RUN \
     dpkg -i grafana_latest_amd64.deb && \
     rm grafana_latest_amd64.deb
 
-
 # Configure Whisper, Carbon and Graphite-Web
 ADD graphite/initial_data.json /opt/graphite/webapp/graphite/initial_data.json
 ADD graphite/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
@@ -67,13 +66,16 @@ ADD statsd/config.js /src/statsd/config.js
 
 # Confiure Grafana
 ADD grafana/grafana.ini /etc/grafana/grafana.ini
+ADD grafana/import_datasource.sh /etc/grafana/import_datasource.sh
+ADD grafana/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+RUN /etc/grafana/import_datasource.sh
 
 # Configure nginx and supervisord
 ADD nginx/nginx.conf /etc/nginx/nginx.conf
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Expose ports
-#   - 3000: Grafana web interface
+#   - 3000: Grafana 2 web interface
 #   - 8125/udp: StatsD port
 #   - 8126: StatsD administrative port
 EXPOSE 3000 8125/udp 8126
